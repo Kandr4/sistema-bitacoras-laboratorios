@@ -28,6 +28,9 @@
                     <a href="{{ route('profesor.solicitudes.index') }}" class="btn btn-outline-secondary">
                         📄 Ver mis solicitudes
                     </a>
+                    <a href="{{ route('profesor.fallas.index') }}" class="btn btn-outline-secondary">
+                        Reportar fallas
+                    </a>
 
                 </div>
 

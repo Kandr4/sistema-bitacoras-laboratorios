@@ -34,6 +34,27 @@
         </div>
     @endif
 
+    <form method="GET" class="mb-4 flex gap-2">
+
+        <input type="text" name="docente" placeholder="Buscar docente"
+            class="border px-3 py-1 rounded">
+
+        <select name="estado" class="border px-3 py-1 rounded">
+            <option value="">Estado</option>
+            <option>Pendiente</option>
+            <option>En proceso</option>
+            <option>Instalado</option>
+            <option>Rechazado</option>
+        </select>
+
+        <input type="date" name="fecha" class="border px-3 py-1 rounded">
+
+        <button class="bg-blue-600 text-white px-3 py-1 rounded">
+            Filtrar
+        </button>
+
+    </form>
+
 <table class="w-full border rounded-lg overflow-hidden">
 
 <thead class="bg-gray-100 text-gray-700">
@@ -51,7 +72,10 @@
 
 <tr class="border-t hover:bg-gray-50">
 
-    <td class="p-3">{{ $sol->usuario->nombre }}</td>
+    <td class="p-3">
+        {{ $sol->usuario->nombre ?? 'Sin usuario' }}
+        {{ $sol->usuario->paterno ?? '' }}
+    </td>
     <td class="p-3">{{ $sol->software }}</td>
     <td class="p-3">{{ $sol->laboratorio->nombre }}</td>
 

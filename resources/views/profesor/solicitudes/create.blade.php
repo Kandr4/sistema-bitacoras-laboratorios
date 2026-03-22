@@ -1,7 +1,15 @@
 <x-app-layout>
 
 <x-slot name="header">
-    <h2 class="h4">Solicitud de Software</h2>
+    <div class="flex justify-between items-center">
+        <h2 class="h4">Solicitud de Software</h2>
+
+        <!-- 🔙 BOTÓN REGRESAR -->
+        <a href="{{ url('/profesor') }}"
+           class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition shadow">
+            ⬅ Regresar
+        </a>
+    </div>
 </x-slot>
 
 <div class="container mt-4">

@@ -1,82 +1,94 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between
-                    bg-gradient-to-r from-blue-600 to-indigo-700 
-                    text-white p-6 rounded-xl shadow-lg">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 
+                    text-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row md:justify-between">
 
-            <!-- Título del sistema -->
             <div>
-                <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2">
-                    Sistema de Bitácoras de Laboratorio
+                <h2 class="text-3xl font-bold">
+                    Sistema de Bitácoras
                 </h2>
-
-                <p class="text-sm md:text-base text-blue-100 mt-1">
-                    Registro y control de actividades realizadas en el laboratorio
+                <p class="text-blue-100 mt-1">
+                    Control y gestión de laboratorios
                 </p>
             </div>
 
-            <!-- Información del usuario -->
             <div class="mt-4 md:mt-0 text-sm md:text-right">
-                <p>
-                    👤 <span class="font-semibold">{{ Auth::user()->name }}</span>
-                </p>
-                <p>
-                    Rol: <span class="font-semibold capitalize">{{ Auth::user()->rol }}</span>
-                </p>
+                <p>👤 {{ Auth::user()->name }}</p>
+                <p>Rol: <b>{{ ucfirst(Auth::user()->rol) }}</b></p>
             </div>
 
         </div>
     </x-slot>
 
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+    <div class="py-10">
+        <div class="max-w-7xl mx-auto px-4">
 
-                    {{-- Bienvenida --}}
-                    <h1 class="text-2xl font-bold mb-2">
-                        Bienvenido {{ Auth::user()->name }}
-                    </h1>
-
-                    <p class="mb-6">
-                        Tu rol es: <b>{{ ucfirst(Auth::user()->rol) }}</b>
-                    </p>
-
-                    {{-- Botones de gestión --}}
-                    <div class="flex flex-wrap gap-4">
-
-                        <a href="{{ route('usuarios.index') }}" 
-                           class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow">
-                            Gestionar Usuarios
-                        </a>
-
-                        <a href="#" 
-                           class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition shadow">
-                            Otro Botón
-                        </a>
-
-                        <a href="#" 
-                           class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition shadow">
-                            Más Opciones
-                        </a>
-
-                        
-
-                        <a href="{{ url('/admin/laboratorios') }}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition shadow">
-                            Nuevo laboratorio
-                        </a>
-                        <a href="{{ route('admin.solicitudes.index') }}" 
-                            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow">
-                            📄 Ver Solicitudes
-                        </a>
-
-                        
-                    </div>
-
-                </div>
+            {{-- BIENVENIDA --}}
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">
+                    Panel de Administración
+                </h1>
+                <p class="text-gray-600">
+                    Administra todos los módulos del sistema desde aquí
+                </p>
             </div>
+
+            {{-- GRID DE MODULOS --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                {{-- Usuarios --}}
+                <a href="{{ route('usuarios.index') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-blue-500">
+                    <h3 class="text-lg font-semibold text-gray-800">👥 Usuarios</h3>
+                    <p class="text-gray-500 text-sm mt-1">Administrar usuarios del sistema</p>
+                </a>
+
+                {{-- Laboratorios --}}
+                <a href="{{ url('/admin/laboratorios') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-yellow-500">
+                    <h3 class="text-lg font-semibold text-gray-800">🏫 Laboratorios</h3>
+                    <p class="text-gray-500 text-sm mt-1">Gestionar laboratorios</p>
+                </a>
+
+                {{-- Solicitudes Software --}}
+                <a href="{{ route('admin.solicitudes.index') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-indigo-500">
+                    <h3 class="text-lg font-semibold text-gray-800">💻 Software</h3>
+                    <p class="text-gray-500 text-sm mt-1">Solicitudes de software</p>
+                </a>
+
+                {{-- Mantenimiento --}}
+                <a href="{{ route('admin.mantenimiento.index') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-green-500">
+                    <h3 class="text-lg font-semibold text-gray-800">🛠️ Mantenimiento</h3>
+                    <p class="text-gray-500 text-sm mt-1">Bitácora de mantenimiento</p>
+                </a>
+
+                {{-- Solicitudes Compra --}}
+                <a href="{{ route('admin.solicitudesCompra.index') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-blue-400">
+                    <h3 class="text-lg font-semibold text-gray-800">🛒 Compras</h3>
+                    <p class="text-gray-500 text-sm mt-1">Solicitudes de compra</p>
+                </a>
+
+                {{-- Incidencias --}}
+                <a href="{{ route('admin.incidencias.index') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-red-500">
+                    <h3 class="text-lg font-semibold text-gray-800">⚠️ Incidencias</h3>
+                    <p class="text-gray-500 text-sm mt-1">Gestión de incidencias</p>
+                </a>
+
+                {{-- Equipos --}}
+                <a href="{{ route('admin.equipos.index') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-purple-500">
+                    <h3 class="text-lg font-semibold text-gray-800">🖥️ Equipos</h3>
+                    <p class="text-gray-500 text-sm mt-1">Administrar equipos</p>
+                </a>
+
+            </div>
+
         </div>
     </div>
 

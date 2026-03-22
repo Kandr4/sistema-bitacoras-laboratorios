@@ -37,16 +37,38 @@ class SolicitudSoftwareController extends Controller
 
         return redirect('/profesor')->with('success', 'Solicitud enviada');
     }
-    public function all()
+    public function all(Request $request)
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-
-        if (!$user || ($user->rol !== 'Admin' && $user->rol !== 'Técnico')) {
+        // 🔒 Validación de rol
+        if (!in_array(Auth::user()->rol, ['Admin', 'Técnico'])) {  // Changed to Auth::user()
             abort(403);
         }
 
-        $solicitudes = SolicitudSoftware::all();
+        // 🔍 Consulta con relaciones
+        $query = SolicitudSoftware::with(['usuario', 'laboratorio']);
+
+        // 🔍 FILTROS
+        if ($request->estado) {
+            $query->where('estado', $request->estado);
+        }
+
+        if ($request->docente) {
+            $query->whereHas('usuario', function($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->docente . '%');
+            });
+        }
+
+        if ($request->fecha) {
+            $query->whereDate('fecsolicitud', $request->fecha);
+        }
+
+        $solicitudes = $query->get();
+
+        // 🎯 Vista según rol
+        if (Auth::user()->rol == 'Técnico') {  // Changed to Auth::user() and standardized role name
+            return view('tecnico.solicitudes.index', compact('solicitudes'));
+        }
+
         return view('admin.solicitudes.index', compact('solicitudes'));
     }
     public function edit($id)

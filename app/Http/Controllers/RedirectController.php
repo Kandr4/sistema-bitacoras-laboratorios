@@ -22,7 +22,7 @@ class RedirectController extends Controller
         if ($user->rol == 'Técnico') {
             return redirect('/tecnico');
         }
+        return redirect('/');
 
-      
     }
 }

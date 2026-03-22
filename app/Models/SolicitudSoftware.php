@@ -21,8 +21,8 @@ class SolicitudSoftware extends Model
     ];
 
     public function usuario(){
-        return $this->belongsTo(User::class, 'idusuario');
-    }
+    return $this->belongsTo(User::class, 'idusuario');
+}
 
     public function laboratorio(){
         return $this->belongsTo(Laboratorio::class, 'idlab');
