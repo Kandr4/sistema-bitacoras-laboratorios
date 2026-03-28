@@ -13,6 +13,7 @@ class Laboratorio extends Model
     protected $fillable = [
         'nombre',
         'ubicacion',
-        'estado'
+        'estado',
+        'qr_token'
     ];
 }

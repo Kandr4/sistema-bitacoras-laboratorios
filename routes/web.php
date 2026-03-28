@@ -13,6 +13,7 @@ use App\Http\Controllers\IncidenciaController;
 use App\Http\Controllers\AdminIncidenciaController;
 use App\Http\Controllers\FallaController;
 use App\Http\Controllers\EquipoController;
+use App\Http\Controllers\QrAsistenciaController;
 
 
 Route::get('/', function () {
@@ -24,6 +25,11 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 Route::get('/redirect',[RedirectController::class,'index'])->middleware('auth');
+
+// Ruta de escaneo de QR para registro de asistencia
+Route::get('/asistencia/registrar/{token}', [QrAsistenciaController::class, 'registrar'])
+    ->middleware('auth')
+    ->name('asistencia.registrar');
 
 Route::middleware('auth')->group(function () {
 
@@ -82,6 +88,12 @@ Route::middleware('auth')->group(function () {
         Route::put('incidencias/{incidencia}', [AdminIncidenciaController::class, 'update'])->name('incidencias.update');
         Route::put('incidencias/{incidencia}/inactivar', [AdminIncidenciaController::class, 'inactivar'])->name('incidencias.inactivar');
         Route::resource('equipos',EquipoController::class);
+
+        // QR de laboratorios
+        Route::post('laboratorios/{idlab}/qr', [QrAsistenciaController::class, 'generarQr'])
+            ->name('laboratorios.qr.generar');
+        Route::get('laboratorios/{idlab}/qr', [QrAsistenciaController::class, 'mostrarQr'])
+            ->name('laboratorios.qr.ver');
     });
 
     // 🧑‍🔧 TECNICO 🔥 (LO QUE NECESITAS)

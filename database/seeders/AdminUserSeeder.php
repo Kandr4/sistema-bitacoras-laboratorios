@@ -24,5 +24,25 @@ class AdminUserSeeder extends Seeder
             'rol' => 'Admin',
             'estado' => 1
         ]);
+
+        User::create([
+            'nombre' => 'Profesor',
+            'paterno' => 'Sistema',
+            'materno' => 'Principal',
+            'email' => 'profesor@sistema.com',
+            'password' => Hash::make('profe123'),
+            'rol' => 'Profesor',
+            'estado' => 1
+        ]);
+
+        User::create([
+            'nombre' => 'Tecnico',
+            'paterno' => 'Sistema',
+            'materno' => 'Principal',
+            'email' => 'tecnico@sistema.com',
+            'password' => Hash::make('tecni123'),
+            'rol' => 'Técnico',
+            'estado' => 1
+        ]);
     }
 }

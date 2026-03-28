@@ -81,6 +81,22 @@
                                             Editar
                                         </a>
 
+                                        <!-- Ver QR -->
+                                        @if($lab->qr_token)
+                                            <a href="{{ route('admin.laboratorios.qr.ver', $lab->idlab) }}"
+                                                class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">
+                                                📱 QR
+                                            </a>
+                                        @else
+                                            <form action="{{ route('admin.laboratorios.qr.generar', $lab->idlab) }}" method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600">
+                                                    Generar QR
+                                                </button>
+                                            </form>
+                                        @endif
+
                                         <!-- Eliminar -->
                                         <form action="{{ route('admin.laboratorios.destroy', $lab->idlab) }}" method="POST">
                                             @csrf
