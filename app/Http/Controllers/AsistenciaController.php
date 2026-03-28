@@ -25,10 +25,68 @@ class AsistenciaController extends Controller
         $asistencias = Asistencia::where('idusuario', $user->id)
             ->where('estado', 'activa')
             ->with('laboratorio')
-            ->latest('fecha')
+            ->orderBy('fecha', 'desc')
+            ->orderBy('entrada', 'desc')
             ->paginate(15);
 
         return view('profesor.asistencias.index', compact('asistencias'));
+    }
+
+    public function registrarSalida($id)
+    {
+        $user = Auth::user();
+
+        if ($user->rol !== 'Profesor') {
+            abort(403, 'Acceso no autorizado.');
+        }
+
+        $asistencia = Asistencia::findOrFail($id);
+
+        // Validar propiedad
+        if ($asistencia->idusuario !== $user->id) {
+            abort(403, 'No tienes permiso para modificar esta asistencia.');
+        }
+
+        // Validar que no tenga salida ya
+        if ($asistencia->salida !== null) {
+            return redirect()->route('profesor.asistencias.index')
+                ->with('error', 'Esta asistencia ya tiene registrada una salida.');
+        }
+
+        // Validar que esté activa
+        if ($asistencia->estado !== 'activa') {
+            abort(404);
+        }
+
+        $asistencia->salida = now();
+        $asistencia->save();
+
+        return redirect()->route('profesor.asistencias.salida.confirmacion', $asistencia->idasistencia);
+    }
+
+    public function confirmacionSalida($id)
+    {
+        $user = Auth::user();
+
+        if ($user->rol !== 'Profesor') {
+            abort(403, 'Acceso no autorizado.');
+        }
+
+        $asistencia = Asistencia::with('laboratorio')->findOrFail($id);
+
+        if ($asistencia->idusuario !== $user->id) {
+            abort(403, 'No tienes permiso para ver esta asistencia.');
+        }
+
+        // Calcular permanencia
+        $diff = $asistencia->entrada->diff($asistencia->salida);
+        $permanencia = '';
+        if ($diff->h > 0) {
+            $permanencia .= $diff->h . 'h ';
+        }
+        $permanencia .= $diff->i . 'min';
+
+        return view('profesor.asistencias.salida', compact('asistencia', 'permanencia'));
     }
 
     // ──────────────────────────────────────────────
@@ -56,7 +114,7 @@ class AsistenciaController extends Controller
             $query->where('idusuario', $request->idusuario);
         }
 
-        $asistencias = $query->latest('fecha')->paginate(15);
+        $asistencias = $query->orderBy('fecha', 'desc')->orderBy('entrada', 'desc')->paginate(15);
 
         // Datos para los selects de filtro
         $laboratorios = Laboratorio::all();
@@ -105,7 +163,7 @@ class AsistenciaController extends Controller
             $query->where('grupo', $request->grupo);
         }
 
-        $asistencias = $query->latest('fecha')->paginate(20);
+        $asistencias = $query->orderBy('fecha', 'desc')->orderBy('entrada', 'desc')->paginate(20);
 
         // Datos para los selects de filtro
         $laboratorios = Laboratorio::all();

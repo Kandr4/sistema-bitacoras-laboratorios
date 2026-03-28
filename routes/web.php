@@ -71,8 +71,10 @@ Route::middleware('auth')->group(function () {
         Route::get('fallas/create', [FallaController::class, 'create'])->name('fallas.create');
         Route::post('fallas', [FallaController::class, 'store'])->name('fallas.store');
 
-        // ASISTENCIAS PROFESOR (solo lectura)
+        // ASISTENCIAS PROFESOR (solo lectura + salida)
         Route::get('asistencias', [AsistenciaController::class, 'historialProfesor'])->name('asistencias.index');
+        Route::post('asistencias/{id}/salida', [AsistenciaController::class, 'registrarSalida'])->name('asistencias.salida');
+        Route::get('asistencias/{id}/salida', [AsistenciaController::class, 'confirmacionSalida'])->name('asistencias.salida.confirmacion');
     });
 
     // 👨‍💼 ADMIN

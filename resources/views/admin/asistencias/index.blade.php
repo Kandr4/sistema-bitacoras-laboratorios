@@ -125,6 +125,8 @@
                         <th class="px-4 py-3">Laboratorio</th>
                         <th class="px-4 py-3">Fecha</th>
                         <th class="px-4 py-3">Entrada</th>
+                        <th class="px-4 py-3">Salida</th>
+                        <th class="px-4 py-3">Permanencia</th>
                         <th class="px-4 py-3">Asignatura</th>
                         <th class="px-4 py-3">Grupo</th>
                         <th class="px-4 py-3">Acciones</th>
@@ -139,6 +141,20 @@
                             <td class="px-4 py-2 text-sm">{{ $asistencia->laboratorio->nombre ?? '-' }}</td>
                             <td class="px-4 py-2 text-sm">{{ $asistencia->fecha->format('d/m/Y') }}</td>
                             <td class="px-4 py-2 text-sm">{{ $asistencia->entrada->format('H:i') }}</td>
+                            <td class="px-4 py-2 text-sm">{{ $asistencia->salida ? $asistencia->salida->format('H:i') : '-' }}</td>
+                            <td class="px-4 py-2 text-sm">
+                                @if($asistencia->salida)
+                                    @php
+                                        $diff = $asistencia->entrada->diff($asistencia->salida);
+                                        $perm = '';
+                                        if ($diff->h > 0) $perm .= $diff->h . 'h ';
+                                        $perm .= $diff->i . 'min';
+                                    @endphp
+                                    {{ $perm }}
+                                @else
+                                    <span class="text-yellow-600 font-medium">En curso</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-2 text-sm">{{ $asistencia->asignatura ?? '-' }}</td>
                             <td class="px-4 py-2 text-sm">{{ $asistencia->grupo ?? '-' }}</td>
                             <td class="px-4 py-2 flex gap-2">
@@ -160,7 +176,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-gray-400">
+                            <td colspan="9" class="px-4 py-8 text-center text-gray-400">
                                 No se encontraron asistencias.
                             </td>
                         </tr>
