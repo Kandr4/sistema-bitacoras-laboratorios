@@ -56,6 +56,13 @@
                     <p class="text-sm mt-2 opacity-80">Reportar y dar seguimiento a fallas</p>
                 </a>
 
+                {{-- Asistencias --}}
+                <a href="{{ route('tecnico.asistencias.index') }}"
+                   class="bg-amber-600 text-white p-6 rounded-xl shadow hover:bg-amber-700 transition">
+                    <h3 class="text-lg font-semibold">📋 Asistencias</h3>
+                    <p class="text-sm mt-2 opacity-80">Consultar asistencias de profesores</p>
+                </a>
+
             </div>
 
         </div>

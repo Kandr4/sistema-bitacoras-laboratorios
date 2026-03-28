@@ -31,8 +31,9 @@
                     <a href="{{ route('profesor.fallas.index') }}" class="btn btn-outline-secondary">
                         Reportar fallas
                     </a>
-
-                </div>
+                    <a href="{{ route('profesor.asistencias.index') }}" class="btn btn-outline-secondary">
+                        📋 Mi historial de asistencias
+                    </a>
 
             </div>
         </div>

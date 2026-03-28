@@ -20,6 +20,7 @@ class Asistencia extends Model
         'grupo',
         'carrera',
         'nombre_practica',
+        'estado',
     ];
 
     protected $casts = [

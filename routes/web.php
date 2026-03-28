@@ -14,6 +14,7 @@ use App\Http\Controllers\AdminIncidenciaController;
 use App\Http\Controllers\FallaController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\QrAsistenciaController;
+use App\Http\Controllers\AsistenciaController;
 
 
 Route::get('/', function () {
@@ -69,6 +70,9 @@ Route::middleware('auth')->group(function () {
         Route::get('fallas', [FallaController::class, 'indexProfesor'])->name('fallas.index');
         Route::get('fallas/create', [FallaController::class, 'create'])->name('fallas.create');
         Route::post('fallas', [FallaController::class, 'store'])->name('fallas.store');
+
+        // ASISTENCIAS PROFESOR (solo lectura)
+        Route::get('asistencias', [AsistenciaController::class, 'historialProfesor'])->name('asistencias.index');
     });
 
     // 👨‍💼 ADMIN
@@ -103,6 +107,12 @@ Route::middleware('auth')->group(function () {
             ->name('laboratorios.qr.generar');
         Route::get('laboratorios/{idlab}/qr', [QrAsistenciaController::class, 'mostrarQr'])
             ->name('laboratorios.qr.ver');
+
+        // ASISTENCIAS ADMIN (gestión completa)
+        Route::get('asistencias', [AsistenciaController::class, 'indexAdmin'])->name('asistencias.index');
+        Route::get('asistencias/{id}/edit', [AsistenciaController::class, 'editAdmin'])->name('asistencias.edit');
+        Route::put('asistencias/{id}', [AsistenciaController::class, 'updateAdmin'])->name('asistencias.update');
+        Route::put('asistencias/{id}/inactivar', [AsistenciaController::class, 'inactivarAdmin'])->name('asistencias.inactivar');
     });
 
     // 🧑‍🔧 TECNICO 🔥 (LO QUE NECESITAS)
@@ -152,6 +162,9 @@ Route::middleware('auth')->group(function () {
         Route::post('fallas', [FallaController::class, 'store'])->name('fallas.store');      // guardar falla
         Route::get('fallas/{falla}', [FallaController::class, 'show'])->name('fallas.show'); // ver detalle de falla
         Route::put('fallas/{falla}', [FallaController::class, 'update'])->name('fallas.update'); // actualizar falla
+
+        // ASISTENCIAS TÉCNICO (solo lectura con filtros)
+        Route::get('asistencias', [AsistenciaController::class, 'indexTecnico'])->name('asistencias.index');
         
     });  
     

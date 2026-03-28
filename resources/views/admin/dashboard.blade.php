@@ -87,6 +87,13 @@
                     <p class="text-gray-500 text-sm mt-1">Administrar equipos</p>
                 </a>
 
+                {{-- Asistencias --}}
+                <a href="{{ route('admin.asistencias.index') }}" 
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-orange-500">
+                    <h3 class="text-lg font-semibold text-gray-800">📋 Asistencias</h3>
+                    <p class="text-gray-500 text-sm mt-1">Gestión de asistencias de profesores</p>
+                </a>
+
             </div>
 
         </div>
