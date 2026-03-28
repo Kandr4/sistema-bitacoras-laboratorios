@@ -15,6 +15,11 @@ class Asistencia extends Model
         'entrada',
         'salida',
         'fecha',
+        'asignatura',
+        'cuatrimestre',
+        'grupo',
+        'carrera',
+        'nombre_practica',
     ];
 
     protected $casts = [

@@ -10,6 +10,33 @@ use App\Models\Asistencia;
 
 class QrAsistenciaController extends Controller
 {
+    // Catálogo de asignaturas predefinidas
+    public const ASIGNATURAS = [
+        'Programación Estructurada',
+        'Programación Orientada a Objetos',
+        'Estructura de Datos',
+        'Base de Datos',
+        'Redes',
+        'Sistemas Operativos',
+        'Ingeniería de Software',
+    ];
+
+    // Catálogo de carreras predefinidas
+    public const CARRERAS = [
+        'Ingeniería en Tecnologías de la Información e Innovación Digital',
+        'Ingeniería en Sistemas Electrónicos',
+        'Ingeniería en Biotecnología',
+        'Ingeniería Industrial',
+        'Ingeniería Financiera',
+        'Licenciatura en Administración',
+    ];
+
+    // Cuatrimestres del 1 al 15
+    public const CUATRIMESTRES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+
+    // Grupos de la A a la F
+    public const GRUPOS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
     /**
      * Genera (o regenera) el qr_token UUID del laboratorio y muestra la vista del QR.
      * POST admin/laboratorios/{idlab}/qr
@@ -41,13 +68,12 @@ class QrAsistenciaController extends Controller
 
         // URL que el profesor escaneará
         $url = route('asistencia.registrar', $laboratorio->qr_token);
-        //$url = 'http://192.168.1.65:8000/asistencia/registrar/' . $laboratorio->qr_token;
 
         return view('admin.laboratorios.qr', compact('laboratorio', 'url'));
     }
 
     /**
-     * Registra la asistencia al escanear el QR.
+     * Registra la asistencia al escanear el QR y redirige al formulario de datos de práctica.
      * GET /asistencia/registrar/{token}
      */
     public function registrar($token)
@@ -72,7 +98,7 @@ class QrAsistenciaController extends Controller
             ]);
         }
 
-        // Crear registro de asistencia
+        // Crear registro de asistencia (sin datos de práctica aún)
         $asistencia = Asistencia::create([
             'idusuario' => $user->id,
             'idlaboratorio' => $laboratorio->idlab,
@@ -80,12 +106,64 @@ class QrAsistenciaController extends Controller
             'fecha' => now()->toDateString(),
         ]);
 
+        // Redirigir a la página de confirmación con formulario
+        return redirect()->route('asistencia.confirmar', $asistencia->idasistencia);
+    }
+
+    /**
+     * Muestra la página de confirmación con el formulario de datos de práctica.
+     * GET /asistencia/confirmar/{idasistencia}
+     */
+    public function confirmar($idasistencia)
+    {
+        $asistencia = Asistencia::findOrFail($idasistencia);
+        $user = Auth::user();
+
+        // Verificar que la asistencia pertenece al usuario actual
+        if ($asistencia->idusuario !== $user->id) {
+            abort(403, 'No tienes permiso para acceder a esta asistencia.');
+        }
+
+        $laboratorio = $asistencia->laboratorio;
+
         return view('asistencia.confirmacion', [
             'exito' => true,
             'mensaje' => '¡Asistencia registrada correctamente!',
             'asistencia' => $asistencia,
             'laboratorio' => $laboratorio,
             'usuario' => $user,
+            'asignaturas' => self::ASIGNATURAS,
+            'carreras' => self::CARRERAS,
+            'cuatrimestres' => self::CUATRIMESTRES,
+            'grupos' => self::GRUPOS,
         ]);
+    }
+
+    /**
+     * Guarda los datos de práctica en la asistencia.
+     * POST /asistencia/confirmar/{idasistencia}
+     */
+    public function guardarDatosPractica(Request $request, $idasistencia)
+    {
+        $asistencia = Asistencia::findOrFail($idasistencia);
+        $user = Auth::user();
+
+        // Verificar que la asistencia pertenece al usuario actual
+        if ($asistencia->idusuario !== $user->id) {
+            abort(403, 'No tienes permiso para modificar esta asistencia.');
+        }
+
+        $validated = $request->validate([
+            'asignatura' => 'required|string|in:' . implode(',', self::ASIGNATURAS),
+            'cuatrimestre' => 'required|integer|min:1|max:15',
+            'grupo' => 'required|string|in:' . implode(',', self::GRUPOS),
+            'carrera' => 'required|string|in:' . implode(',', self::CARRERAS),
+            'nombre_practica' => 'required|string|max:255',
+        ]);
+
+        $asistencia->update($validated);
+
+        return redirect()->route('asistencia.confirmar', $asistencia->idasistencia)
+            ->with('success', 'Datos de la práctica guardados correctamente.');
     }
 }

@@ -31,6 +31,15 @@ Route::get('/asistencia/registrar/{token}', [QrAsistenciaController::class, 'reg
     ->middleware('auth')
     ->name('asistencia.registrar');
 
+// Rutas de confirmación y datos de práctica
+Route::get('/asistencia/confirmar/{idasistencia}', [QrAsistenciaController::class, 'confirmar'])
+    ->middleware('auth')
+    ->name('asistencia.confirmar');
+
+Route::post('/asistencia/confirmar/{idasistencia}', [QrAsistenciaController::class, 'guardarDatosPractica'])
+    ->middleware('auth')
+    ->name('asistencia.guardarDatos');
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
