@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Asistencia;
+use App\Models\Falla;
+use App\Models\Equipo;
 use App\Models\Laboratorio;
 use App\Models\User;
 use App\Exports\AsistenciasExport;
+use App\Exports\FallasExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -142,5 +145,98 @@ class ReporteController extends Controller
 
         $pdf = Pdf::loadView('admin.reportes.asistencias.pdf', compact('asistencias'))->setPaper('a4', 'landscape');
         return $pdf->download('reporte-asistencias.pdf');
+    }
+
+    /**
+     * Módulo de Reportes de Fallas (Vista con Filtros, Tabla y Gráfica).
+     */
+    public function fallas(Request $request)
+    {
+        $query = Falla::with(['usuario', 'laboratorio', 'equipo']);
+
+        // Aplicar filtros
+        if ($request->filled('fecha_inicio')) {
+            $query->whereDate('created_at', '>=', $request->fecha_inicio);
+        }
+        if ($request->filled('fecha_fin')) {
+            $query->whereDate('created_at', '<=', $request->fecha_fin);
+        }
+        if ($request->filled('laboratorio_id')) {
+            $query->where('laboratorio_id', $request->laboratorio_id);
+        }
+        if ($request->filled('tipo_falla')) {
+            $query->where('tipo_falla', $request->tipo_falla);
+        }
+        if ($request->filled('equipo_id')) {
+            $query->where('equipo_id', $request->equipo_id);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('usuario_id')) {
+            $query->where('usuario_id', $request->usuario_id);
+        }
+
+        $fallas = $query->orderBy('created_at', 'desc')->get();
+
+        // Configuración para Chart.js
+        $agrupar = $request->input('agrupar_por', 'laboratorio'); // 'laboratorio' o 'tipo_falla'
+        
+        $graphData = [
+            'labels' => [],
+            'values' => [],
+            'title' => $agrupar == 'laboratorio' ? 'Fallas reportadas por Laboratorio' : 'Fallas reportadas por Tipo'
+        ];
+
+        if($agrupar == 'laboratorio') {
+            $grouped = $fallas->groupBy(function($item) {
+                return $item->laboratorio ? $item->laboratorio->nombre : 'Desconocido';
+            });
+        } else {
+            $grouped = $fallas->groupBy('tipo_falla');
+        }
+
+        foreach($grouped as $key => $items) {
+            $graphData['labels'][] = $key ?: 'Sin tipo';
+            $graphData['values'][] = $items->count();
+        }
+
+        // Catálogos para los selects de filtro
+        $usuarios = User::all();
+        $laboratorios = Laboratorio::all();
+        $equipos = Equipo::all();
+        // Tipos de falla únicos extraídos de la BD
+        $tipos_falla = Falla::select('tipo_falla')->whereNotNull('tipo_falla')->distinct()->pluck('tipo_falla');
+
+        return view('admin.reportes.fallas.index', compact('fallas', 'graphData', 'usuarios', 'laboratorios', 'equipos', 'tipos_falla', 'agrupar'));
+    }
+
+    /**
+     * Exportación de Fallas PDF o Excel
+     */
+    public function exportarFallas(Request $request)
+    {
+        $tipoRespuesta = $request->input('export_type', 'pdf');
+
+        if ($tipoRespuesta == 'excel') {
+            return Excel::download(new FallasExport($request), 'reporte-fallas.xlsx');
+        }
+
+        $query = Falla::with(['usuario', 'laboratorio', 'equipo']);
+
+        if ($request->filled('fecha_inicio')) $query->whereDate('created_at', '>=', $request->fecha_inicio);
+        if ($request->filled('fecha_fin')) $query->whereDate('created_at', '<=', $request->fecha_fin);
+        if ($request->filled('laboratorio_id')) $query->where('laboratorio_id', $request->laboratorio_id);
+        if ($request->filled('tipo_falla')) $query->where('tipo_falla', $request->tipo_falla);
+        if ($request->filled('equipo_id')) $query->where('equipo_id', $request->equipo_id);
+        if ($request->filled('estado')) $query->where('estado', $request->estado);
+        if ($request->filled('usuario_id')) $query->where('usuario_id', $request->usuario_id);
+
+        $fallas = $query->orderBy('created_at', 'desc')->get();
+
+        ini_set('max_execution_time', 300);
+
+        $pdf = Pdf::loadView('admin.reportes.fallas.pdf', compact('fallas'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-fallas.pdf');
     }
 }

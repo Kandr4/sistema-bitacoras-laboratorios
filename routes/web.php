@@ -127,6 +127,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [\App\Http\Controllers\ReporteController::class, 'index'])->name('index');
             Route::get('/asistencias', [\App\Http\Controllers\ReporteController::class, 'asistencias'])->name('asistencias.index');
             Route::get('/asistencias/exportar', [\App\Http\Controllers\ReporteController::class, 'exportarAsistencias'])->name('asistencias.exportar');
+            
+            Route::get('/fallas', [\App\Http\Controllers\ReporteController::class, 'fallas'])->name('fallas.index');
+            Route::get('/fallas/exportar', [\App\Http\Controllers\ReporteController::class, 'exportarFallas'])->name('fallas.exportar');
         });
     });
 
