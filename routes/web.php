@@ -53,16 +53,16 @@ Route::middleware('auth')->group(function () {
     Route::put('notificaciones/leer-todas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.leerTodas');
     Route::put('notificaciones/{id}/leer', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leer');
 
-    Route::resource('usuarios', UsuarioController::class);
+    Route::resource('usuarios', UsuarioController::class)->middleware('role:Admin');
 
     // CRUD de fallas
-    Route::resource('fallas', FallaController::class);
+    Route::resource('fallas', FallaController::class)->middleware('role:Admin,Técnico');
     
     // Ruta para actualizar estado (solo técnicos)
-    Route::put('fallas/{falla}/estado', [FallaController::class, 'updateEstado'])->name('fallas.updateEstado');
+    Route::put('fallas/{falla}/estado', [FallaController::class, 'updateEstado'])->name('fallas.updateEstado')->middleware('role:Técnico');
 
     // 👨‍🏫 PROFESOR
-    Route::prefix('profesor')->name('profesor.')->group(function () {
+    Route::prefix('profesor')->name('profesor.')->middleware('role:Profesor')->group(function () {
 
         Route::get('/solicitudes/create', [SolicitudSoftwareController::class, 'create'])
             ->name('solicitudes.create');
@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // 👨‍💼 ADMIN
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('role:Admin')->group(function () {
 
         Route::resource('laboratorios', LaboratorioController::class);
 
@@ -124,7 +124,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // 🧑‍🔧 TECNICO 🔥 (LO QUE NECESITAS)
-    Route::prefix('tecnico')->name('tecnico.')->group(function () {
+    Route::prefix('tecnico')->name('tecnico.')->middleware('role:Técnico')->group(function () {
 
         Route::get('/solicitudes', [SolicitudSoftwareController::class, 'all'])
             ->name('solicitudes.index');
@@ -184,17 +184,14 @@ Route::get('/admin', function () {
     $laboratorios = Laboratorio::all();
 
     return view('admin.dashboard', compact('laboratorios'));
-})->middleware('auth');
-
-Route::get('/usuarios',[UsuarioController::class,'index'])->middleware('auth');
-Route::resource('usuarios', UsuarioController::class);
+})->middleware(['auth', 'role:Admin']);
 
 Route::get('/profesor', function () {
     return view('profesor.dashboard');
-})->middleware('auth');
+})->middleware(['auth', 'role:Profesor']);
 
 Route::get('/tecnico', function () {
     return view('tecnico.dashboard');
-})->middleware('auth');
+})->middleware(['auth', 'role:Técnico']);
 
 require __DIR__.'/auth.php';
