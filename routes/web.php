@@ -15,6 +15,7 @@ use App\Http\Controllers\FallaController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\QrAsistenciaController;
 use App\Http\Controllers\AsistenciaController;
+use App\Http\Controllers\NotificacionController;
 
 
 Route::get('/', function () {
@@ -46,6 +47,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // NOTIFICACIONES (todos los roles)
+    Route::get('notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::put('notificaciones/leer-todas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.leerTodas');
+    Route::put('notificaciones/{id}/leer', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leer');
 
     Route::resource('usuarios', UsuarioController::class);
 

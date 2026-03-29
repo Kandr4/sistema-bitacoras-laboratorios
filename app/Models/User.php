@@ -50,7 +50,17 @@ class User extends Authenticatable
         ];
     }
     public function solicitudes()
-{
-    return $this->hasMany(SolicitudSoftware::class, 'idusuario');
-}
+    {
+        return $this->hasMany(SolicitudSoftware::class, 'idusuario');
+    }
+
+    public function notificaciones()
+    {
+        return $this->hasMany(\App\Models\Notificacion::class, 'user_id');
+    }
+
+    public function notificacionesNoLeidas()
+    {
+        return $this->notificaciones()->where('leida', false)->count();
+    }
 }

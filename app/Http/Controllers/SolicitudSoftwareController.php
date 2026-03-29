@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SolicitudSoftware;
 use App\Models\Laboratorio;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Services\NotificacionService;
+use App\Mail\NuevaSolicitudSoftwareMail;
+use App\Mail\CambioEstadoSolicitudMail;
 
 
 class SolicitudSoftwareController extends Controller
@@ -26,7 +31,7 @@ class SolicitudSoftwareController extends Controller
 
     public function store(Request $request)
     {
-        SolicitudSoftware::create([
+        $solicitud = SolicitudSoftware::create([
             'idusuario' => Auth::id(),
             'idlab' => $request->idlab,
             'software' => $request->software,
@@ -34,6 +39,20 @@ class SolicitudSoftwareController extends Controller
             'estado' => 'Pendiente',
             'comentario' => $request->comentario
         ]);
+
+        // Cargar relaciones para el email
+        $solicitud->load(['usuario', 'laboratorio']);
+
+        // Notificar a todos los técnicos
+        $tecnicos = User::where('rol', 'Técnico')->get();
+        foreach ($tecnicos as $tecnico) {
+            NotificacionService::crear(
+                $tecnico->id,
+                'solicitud_nueva',
+                'Nueva solicitud de software: ' . $request->software . ' (por ' . Auth::user()->nombre . ')'
+            );
+            Mail::to($tecnico->email)->send(new NuevaSolicitudSoftwareMail($solicitud));
+        }
 
         return redirect('/profesor')->with('success', 'Solicitud enviada');
     }
@@ -95,7 +114,21 @@ class SolicitudSoftwareController extends Controller
             'estado' => $request->estado,
             'comentario_tecnico' => $request->comentario_tecnico
         ]);
-        return redirect('/admin/solicitudes')->with('success', 'Solicitud enviada');
+
+        // Notificar al docente del cambio de estado
+        $solicitud->load('usuario');
+        if ($solicitud->usuario) {
+            NotificacionService::crear(
+                $solicitud->idusuario,
+                'solicitud_estado',
+                'Tu solicitud de "' . $solicitud->software . '" fue ' . strtolower($request->estado) . '.'
+            );
+            Mail::to($solicitud->usuario->email)->send(
+                new CambioEstadoSolicitudMail($solicitud, $request->estado, $request->comentario_tecnico)
+            );
+        }
+
+        return redirect('/admin/solicitudes')->with('success', 'Solicitud actualizada');
     }
     public function destroy($id)
     {

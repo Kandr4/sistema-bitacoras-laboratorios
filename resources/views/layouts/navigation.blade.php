@@ -50,8 +50,81 @@
             </div>
 
 
-            <!-- Usuario -->
-            <div class="hidden sm:flex sm:items-center">
+            <!-- Notificaciones + Usuario -->
+            <div class="hidden sm:flex sm:items-center gap-3">
+
+                <!-- 🔔 Campana de notificaciones -->
+                @auth
+                <div x-data="notifDropdown()" class="relative">
+                    <button @click="toggleDropdown()" class="relative text-white hover:text-blue-200 transition p-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+
+                        @if(Auth::user()->notificacionesNoLeidas() > 0)
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                {{ Auth::user()->notificacionesNoLeidas() > 9 ? '9+' : Auth::user()->notificacionesNoLeidas() }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div x-show="isOpen" @click.outside="isOpen = false"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50"
+                         style="display: none;">
+
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                            <span class="font-semibold text-gray-700 text-sm">Notificaciones</span>
+                            @if(Auth::user()->notificacionesNoLeidas() > 0)
+                                <span class="text-xs text-blue-600 font-medium">{{ Auth::user()->notificacionesNoLeidas() }} nuevas</span>
+                            @endif
+                        </div>
+
+                        <div class="max-h-72 overflow-y-auto">
+                            @php
+                                $ultimasNotifs = Auth::user()->notificaciones()->orderBy('created_at', 'desc')->take(5)->get();
+                            @endphp
+
+                            @forelse($ultimasNotifs as $notif)
+                                <div class="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition
+                                    {{ $notif->leida ? '' : 'bg-blue-50' }}">
+                                    <div class="flex items-start gap-2">
+                                        <span class="flex-shrink-0">
+                                            @if($notif->tipo === 'solicitud_nueva') 💻
+                                            @elseif($notif->tipo === 'solicitud_estado') 📬
+                                            @elseif($notif->tipo === 'falla_resuelta') ✅
+                                            @else 🔔
+                                            @endif
+                                        </span>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm {{ $notif->leida ? 'text-gray-500' : 'text-gray-800 font-medium' }} truncate">
+                                                {{ $notif->mensaje }}
+                                            </p>
+                                            <p class="text-xs text-gray-400 mt-0.5">{{ $notif->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="px-4 py-6 text-center text-gray-400 text-sm">
+                                    Sin notificaciones
+                                </div>
+                            @endforelse
+                        </div>
+
+                        <a href="{{ route('notificaciones.index') }}"
+                           class="block px-4 py-3 text-center text-sm text-blue-600 hover:bg-blue-50 font-medium border-t border-gray-200 transition">
+                            Ver todas las notificaciones
+                        </a>
+                    </div>
+                </div>
+                @endauth
 
                 <x-dropdown align="right" width="48">
 
@@ -99,7 +172,22 @@
 
 
             <!-- Botón móvil -->
-            <div class="flex items-center sm:hidden">
+            <div class="flex items-center sm:hidden gap-2">
+
+                <!-- Campana móvil -->
+                @auth
+                <a href="{{ route('notificaciones.index') }}" class="relative text-white p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    @if(Auth::user()->notificacionesNoLeidas() > 0)
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                            {{ Auth::user()->notificacionesNoLeidas() > 9 ? '9+' : Auth::user()->notificacionesNoLeidas() }}
+                        </span>
+                    @endif
+                </a>
+                @endauth
 
                 <button @click="open = ! open"
                     class="text-white hover:text-gray-200">
@@ -154,8 +242,31 @@
                 Reportes
             </a>
 
+            <a href="{{ route('notificaciones.index') }}"
+               class="block text-white hover:text-blue-200">
+                🔔 Notificaciones
+                @auth
+                    @if(Auth::user()->notificacionesNoLeidas() > 0)
+                        <span class="bg-red-500 text-white text-xs rounded-full px-2 py-0.5 ml-1">
+                            {{ Auth::user()->notificacionesNoLeidas() }}
+                        </span>
+                    @endif
+                @endauth
+            </a>
+
         </div>
 
     </div>
+
+    <script>
+    function notifDropdown() {
+        return {
+            isOpen: false,
+            toggleDropdown() {
+                this.isOpen = !this.isOpen;
+            }
+        }
+    }
+    </script>
 
 </nav>

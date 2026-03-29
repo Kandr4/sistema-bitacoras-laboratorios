@@ -7,6 +7,7 @@ use App\Models\Laboratorio;
 use App\Models\Equipo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificacionService;
 
 class FallaController extends Controller
 {
@@ -91,7 +92,18 @@ class FallaController extends Controller
             'estado' => 'required|in:pendiente,en revision,resuelto',
         ]);
 
+        $estadoAnterior = $falla->estado;
+
         $falla->update($request->all());
+
+        // Notificar al usuario si la falla fue marcada como resuelta
+        if ($request->estado === 'resuelto' && $estadoAnterior !== 'resuelto') {
+            NotificacionService::crear(
+                $falla->usuario_id,
+                'falla_resuelta',
+                'Tu reporte de falla ha sido marcado como resuelto.'
+            );
+        }
 
         return redirect()->route('fallas.index')->with('success','Falla actualizada correctamente.');
     }
