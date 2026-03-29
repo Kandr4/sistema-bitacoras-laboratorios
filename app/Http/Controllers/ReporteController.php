@@ -8,8 +8,11 @@ use App\Models\Falla;
 use App\Models\Equipo;
 use App\Models\Laboratorio;
 use App\Models\User;
+use App\Models\SolicitudSoftware;
 use App\Exports\AsistenciasExport;
 use App\Exports\FallasExport;
+use App\Exports\SolicitudesSoftwareExport;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -238,5 +241,79 @@ class ReporteController extends Controller
 
         $pdf = Pdf::loadView('admin.reportes.fallas.pdf', compact('fallas'))->setPaper('a4', 'landscape');
         return $pdf->download('reporte-fallas.pdf');
+    }
+
+    /**
+     * Módulo de Reportes de Solicitudes de Software (Vista con Filtros, Tabla y Gráfica Circular).
+     */
+    public function solicitudesSoftware(Request $request)
+    {
+        $query = SolicitudSoftware::with(['usuario', 'laboratorio']);
+
+        // Aplicar filtros
+        if ($request->filled('fecha_inicio')) {
+            $query->whereDate('fecsolicitud', '>=', $request->fecha_inicio);
+        }
+        if ($request->filled('fecha_fin')) {
+            $query->whereDate('fecsolicitud', '<=', $request->fecha_fin);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('idlab')) {
+            $query->where('idlab', $request->idlab);
+        }
+        if ($request->filled('idusuario')) {
+            $query->where('idusuario', $request->idusuario);
+        }
+
+        $solicitudes = $query->orderBy('fecsolicitud', 'desc')->get();
+
+        // Agrupación obligatoria de la Gráfica de Pastel: proporciones por estado de solicitud
+        $grouped = $solicitudes->groupBy('estado');
+        
+        $graphData = [
+            'labels' => [],
+            'values' => []
+        ];
+
+        foreach($grouped as $estado => $items) {
+            $graphData['labels'][] = $estado ?: 'Sin definir';
+            $graphData['values'][] = $items->count();
+        }
+
+        // Catálogos para los selects de filtro
+        $docentes = User::where('rol', 'Profesor')->get();
+        $laboratorios = Laboratorio::all();
+        $estados = SolicitudSoftware::select('estado')->whereNotNull('estado')->distinct()->pluck('estado');
+
+        return view('admin.reportes.solicitudes_software.index', compact('solicitudes', 'graphData', 'docentes', 'laboratorios', 'estados'));
+    }
+
+    /**
+     * Exportación de Solicitudes PDF o Excel
+     */
+    public function exportarSolicitudesSoftware(Request $request)
+    {
+        $tipoRespuesta = $request->input('export_type', 'pdf');
+
+        if ($tipoRespuesta == 'excel') {
+            return Excel::download(new SolicitudesSoftwareExport($request), 'reporte-software.xlsx');
+        }
+
+        $query = SolicitudSoftware::with(['usuario', 'laboratorio']);
+
+        if ($request->filled('fecha_inicio')) $query->whereDate('fecsolicitud', '>=', $request->fecha_inicio);
+        if ($request->filled('fecha_fin')) $query->whereDate('fecsolicitud', '<=', $request->fecha_fin);
+        if ($request->filled('estado')) $query->where('estado', $request->estado);
+        if ($request->filled('idlab')) $query->where('idlab', $request->idlab);
+        if ($request->filled('idusuario')) $query->where('idusuario', $request->idusuario);
+
+        $solicitudes = $query->orderBy('fecsolicitud', 'desc')->get();
+
+        ini_set('max_execution_time', 300);
+
+        $pdf = Pdf::loadView('admin.reportes.solicitudes_software.pdf', compact('solicitudes'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-software.pdf');
     }
 }

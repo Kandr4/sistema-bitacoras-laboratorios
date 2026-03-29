@@ -55,6 +55,25 @@
                     </div>
                 </a>
 
+                {{-- Reporte de Solicitudes SW --}}
+                <a href="{{ route('admin.reportes.software.index') }}" 
+                   class="block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="h-2 bg-blue-600"></div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">💻 Software</h3>
+                            <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            Filtra las solicitudes de programas y visualiza el balance de atención (Gráfica circular).
+                        </p>
+                    </div>
+                </a>
+
             </div>
 
         </div>
