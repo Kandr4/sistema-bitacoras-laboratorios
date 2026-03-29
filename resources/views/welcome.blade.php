@@ -69,20 +69,57 @@
 
         <div class="flex justify-center gap-6">
 
-            <a href="{{ route('login') }}"
-                class="px-10 py-4 bg-blue-600 text-white rounded-xl shadow-lg 
-                hover:bg-blue-700 hover:scale-105 transition duration-300">
+            @auth
+                @if(in_array(Auth::user()->rol, ['Admin', 'Profesor', 'Técnico']))
+                    {{-- Usuario con rol: ir a su panel --}}
+                    <a href="{{ route('dashboard') }}"
+                        class="px-10 py-4 bg-blue-600 text-white rounded-xl shadow-lg 
+                        hover:bg-blue-700 hover:scale-105 transition duration-300">
+                        Ir a mi panel
+                    </a>
+                @else
+                    {{-- Usuario sin rol: mensaje de espera --}}
+                    <div class="w-full">
+                        <div class="bg-yellow-50 border border-yellow-300 rounded-xl p-6 text-center">
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-yellow-100 mb-4">
+                                <svg class="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-yellow-800 mb-2">
+                                ¡Cuenta registrada exitosamente!
+                            </h3>
+                            <p class="text-yellow-700 text-sm mb-4">
+                                Un administrador debe asignarte un rol para que puedas acceder al sistema.
+                                Por favor, espera a que se te asigne tu rol.
+                            </p>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="px-8 py-3 bg-gray-600 text-white rounded-xl shadow
+                                    hover:bg-gray-700 hover:scale-105 transition duration-300">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endif
+            @else
+                {{-- No autenticado: botones normales --}}
+                <a href="{{ route('login') }}"
+                    class="px-10 py-4 bg-blue-600 text-white rounded-xl shadow-lg 
+                    hover:bg-blue-700 hover:scale-105 transition duration-300">
+                    Iniciar sesión
+                </a>
 
-                Iniciar sesión
-            </a>
-
-            <a href="{{ route('register') }}"
-                class="px-10 py-4 border-2 border-blue-600 text-blue-600 
-                rounded-xl hover:bg-blue-600 hover:text-white 
-                transition duration-300">
-
-                Registrarse
-            </a>
+                <a href="{{ route('register') }}"
+                    class="px-10 py-4 border-2 border-blue-600 text-blue-600 
+                    rounded-xl hover:bg-blue-600 hover:text-white 
+                    transition duration-300">
+                    Registrarse
+                </a>
+            @endauth
 
         </div>
 
