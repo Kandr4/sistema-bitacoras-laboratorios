@@ -9,9 +9,11 @@ use App\Models\Equipo;
 use App\Models\Laboratorio;
 use App\Models\User;
 use App\Models\SolicitudSoftware;
+use App\Models\Solicitud;
 use App\Exports\AsistenciasExport;
 use App\Exports\FallasExport;
 use App\Exports\SolicitudesSoftwareExport;
+use App\Exports\ComprasExport;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
@@ -315,5 +317,88 @@ class ReporteController extends Controller
 
         $pdf = Pdf::loadView('admin.reportes.solicitudes_software.pdf', compact('solicitudes'))->setPaper('a4', 'landscape');
         return $pdf->download('reporte-software.pdf');
+    }
+
+    /**
+     * Módulo de Reportes de Compras (Filtros financieros, Tabla y Gráfica Pastel).
+     */
+    public function compras(Request $request)
+    {
+        // Traemos Relaciones tecnico, laboratorio
+        $query = Solicitud::with(['tecnico', 'laboratorio']);
+
+        // Filtros
+        if ($request->filled('fecha_inicio')) {
+            $query->whereDate('fecha_solicitud', '>=', $request->fecha_inicio);
+        }
+        if ($request->filled('fecha_fin')) {
+            $query->whereDate('fecha_solicitud', '<=', $request->fecha_fin);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('idlab')) {
+            $query->where('laboratorio_id', $request->idlab);
+        }
+        if ($request->filled('idusuario')) {
+            $query->where('user_id', $request->idusuario);
+        }
+        if ($request->filled('costo_min')) {
+            $query->where('costo_unitario', '>=', $request->costo_min);
+        }
+        if ($request->filled('costo_max')) {
+            $query->where('costo_unitario', '<=', $request->costo_max);
+        }
+
+        $compras = $query->orderBy('fecha_solicitud', 'desc')->get();
+
+        // Agrupación para la Gráfica Pastel (Porciones por "estado" de la compra)
+        $grouped = $compras->groupBy('estado');
+        
+        $graphData = [
+            'labels' => [],
+            'values' => []
+        ];
+
+        foreach($grouped as $estado => $items) {
+            $graphData['labels'][] = $estado ?: 'Sin definir';
+            $graphData['values'][] = $items->count(); // También se podría sumar el costo financiero total con sum('costo_unitario'), pero el requirement solicita "proporcion de solicitudes"
+        }
+
+        // Catálogos para los selects
+        $tecnicos = User::where('rol', 'Tecnico')->get();
+        $laboratorios = Laboratorio::all();
+        $estados = Solicitud::select('estado')->whereNotNull('estado')->distinct()->pluck('estado');
+
+        return view('admin.reportes.compras.index', compact('compras', 'graphData', 'tecnicos', 'laboratorios', 'estados'));
+    }
+
+    /**
+     * Exportación Multi-formato de Compras
+     */
+    public function exportarCompras(Request $request)
+    {
+        $tipoRespuesta = $request->input('export_type', 'pdf');
+
+        if ($tipoRespuesta == 'excel') {
+            return Excel::download(new ComprasExport($request), 'reporte-compras.xlsx');
+        }
+
+        $query = Solicitud::with(['tecnico', 'laboratorio']);
+
+        if ($request->filled('fecha_inicio')) $query->whereDate('fecha_solicitud', '>=', $request->fecha_inicio);
+        if ($request->filled('fecha_fin')) $query->whereDate('fecha_solicitud', '<=', $request->fecha_fin);
+        if ($request->filled('estado')) $query->where('estado', $request->estado);
+        if ($request->filled('idlab')) $query->where('laboratorio_id', $request->idlab);
+        if ($request->filled('idusuario')) $query->where('user_id', $request->idusuario);
+        if ($request->filled('costo_min')) $query->where('costo_unitario', '>=', $request->costo_min);
+        if ($request->filled('costo_max')) $query->where('costo_unitario', '<=', $request->costo_max);
+
+        $compras = $query->orderBy('fecha_solicitud', 'desc')->get();
+
+        ini_set('max_execution_time', 300);
+
+        $pdf = Pdf::loadView('admin.reportes.compras.pdf', compact('compras'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-compras.pdf');
     }
 }

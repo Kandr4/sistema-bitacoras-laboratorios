@@ -133,6 +133,9 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/solicitudes-software', [\App\Http\Controllers\ReporteController::class, 'solicitudesSoftware'])->name('software.index');
             Route::get('/solicitudes-software/exportar', [\App\Http\Controllers\ReporteController::class, 'exportarSolicitudesSoftware'])->name('software.exportar');
+
+            Route::get('/compras', [\App\Http\Controllers\ReporteController::class, 'compras'])->name('compras.index');
+            Route::get('/compras/exportar', [\App\Http\Controllers\ReporteController::class, 'exportarCompras'])->name('compras.exportar');
         });
     });
 
