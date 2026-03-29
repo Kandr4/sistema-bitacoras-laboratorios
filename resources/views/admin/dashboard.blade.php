@@ -37,58 +37,68 @@
 
             {{-- GRID DE MODULOS (Primero, estilos originales) --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {{-- Reportes (NUEVO REQUISITO) --}}
+                <a href="{{ url('/admin/reportes') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-gray-800 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gray-50 opacity-0 group-hover:opacity-100 transition"></div>
+                    <div class="relative z-10">
+                        <h3 class="text-lg font-bold text-gray-800">📊 Reportes</h3>
+                        <p class="text-gray-500 text-sm mt-1">Descarga de reportes avanzados y auditoría</p>
+                    </div>
+                </a>
+
                 {{-- Usuarios --}}
-                <a href="{{ route('usuarios.index') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-blue-500">
+                <a href="{{ route('usuarios.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-blue-500">
                     <h3 class="text-lg font-semibold text-gray-800">👥 Usuarios</h3>
                     <p class="text-gray-500 text-sm mt-1">Administrar usuarios del sistema</p>
                 </a>
 
                 {{-- Laboratorios --}}
-                <a href="{{ url('/admin/laboratorios') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-yellow-500">
+                <a href="{{ url('/admin/laboratorios') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-yellow-500">
                     <h3 class="text-lg font-semibold text-gray-800">🏫 Laboratorios</h3>
                     <p class="text-gray-500 text-sm mt-1">Gestionar laboratorios</p>
                 </a>
 
                 {{-- Solicitudes Software --}}
-                <a href="{{ route('admin.solicitudes.index') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-indigo-500">
+                <a href="{{ route('admin.solicitudes.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-indigo-500">
                     <h3 class="text-lg font-semibold text-gray-800">💻 Software</h3>
                     <p class="text-gray-500 text-sm mt-1">Solicitudes de software</p>
                 </a>
 
                 {{-- Mantenimiento --}}
-                <a href="{{ route('admin.mantenimiento.index') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-green-500">
+                <a href="{{ route('admin.mantenimiento.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-green-500">
                     <h3 class="text-lg font-semibold text-gray-800">🛠️ Mantenimiento</h3>
                     <p class="text-gray-500 text-sm mt-1">Bitácora de mantenimiento</p>
                 </a>
 
                 {{-- Solicitudes Compra --}}
-                <a href="{{ route('admin.solicitudesCompra.index') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-blue-400">
+                <a href="{{ route('admin.solicitudesCompra.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-blue-400">
                     <h3 class="text-lg font-semibold text-gray-800">🛒 Compras</h3>
                     <p class="text-gray-500 text-sm mt-1">Solicitudes de compra</p>
                 </a>
 
                 {{-- Incidencias --}}
-                <a href="{{ route('admin.incidencias.index') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-red-500">
+                <a href="{{ route('admin.incidencias.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-red-500">
                     <h3 class="text-lg font-semibold text-gray-800">⚠️ Incidencias</h3>
                     <p class="text-gray-500 text-sm mt-1">Gestión de incidencias</p>
                 </a>
 
                 {{-- Equipos --}}
-                <a href="{{ route('admin.equipos.index') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-purple-500">
+                <a href="{{ route('admin.equipos.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-purple-500">
                     <h3 class="text-lg font-semibold text-gray-800">🖥️ Equipos</h3>
                     <p class="text-gray-500 text-sm mt-1">Administrar equipos</p>
                 </a>
 
                 {{-- Asistencias --}}
-                <a href="{{ route('admin.asistencias.index') }}" 
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-orange-500">
+                <a href="{{ route('admin.asistencias.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-orange-500">
                     <h3 class="text-lg font-semibold text-gray-800">📋 Asistencias</h3>
                     <p class="text-gray-500 text-sm mt-1">Gestión de asistencias de profesores</p>
                 </a>
@@ -103,12 +113,12 @@
                         Resumen Operativo
                     </h2>
                 </div>
-                
+
                 <a href="{{ route('admin.dashboard.pdf') }}" target="_blank"
-                   class="mt-4 sm:mt-0 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow text-sm font-medium transition flex items-center gap-2">
+                    class="mt-4 sm:mt-0 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow text-sm font-medium transition flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                     Exportar a PDF
                 </a>
@@ -116,7 +126,7 @@
 
             {{-- SECCION ESTADISTICAS Y GRAFICA JUNTAS --}}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10 items-start">
-                
+
                 {{-- Tarjetas (Izquierda, más pequeñas) --}}
                 <div class="lg:col-span-2">
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -125,22 +135,26 @@
                             <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Asistencias</p>
                             <p class="text-2xl font-bold text-gray-800">{{ number_format($stats['asistencias']) }}</p>
                         </div>
-                        
+
                         <!-- Fallas -->
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-red-500">
-                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Fallas Status</p>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Fallas Status
+                            </p>
                             <p class="text-2xl font-bold text-gray-800">{{ number_format($stats['fallas']) }}</p>
                         </div>
 
                         <!-- Solicitudes SW -->
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-indigo-500">
-                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Sol. Software</p>
-                            <p class="text-2xl font-bold text-gray-800">{{ number_format($stats['solicitudesSoftware']) }}</p>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Sol. Software
+                            </p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                {{ number_format($stats['solicitudesSoftware']) }}</p>
                         </div>
 
                         <!-- Reparaciones -->
                         <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500">
-                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Mant. Realizados</p>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Mant. Realizados
+                            </p>
                             <p class="text-2xl font-bold text-gray-800">{{ number_format($stats['reparaciones']) }}</p>
                         </div>
 
@@ -170,23 +184,23 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const ctx = document.getElementById('dashboardChart').getContext('2d');
-            
+
             // Colores correspondientes a Tailwind (Orange, Red, Indigo, Blue)
             const colores = ['#f97316', '#ef4444', '#6366f1', '#60a5fa'];
-            
+
             const data = {
                 labels: [
-                    'Asistencias', 
-                    'Fallas', 
-                    'Sol. Software', 
+                    'Asistencias',
+                    'Fallas',
+                    'Sol. Software',
                     'Sol. Compra'
                 ],
                 datasets: [{
                     label: 'Registros',
                     data: [
-                        {{ $stats['asistencias'] }}, 
-                        {{ $stats['fallas'] }}, 
-                        {{ $stats['solicitudesSoftware'] }}, 
+                        {{ $stats['asistencias'] }},
+                        {{ $stats['fallas'] }},
+                        {{ $stats['solicitudesSoftware'] }},
                         {{ $stats['compras'] }}
                     ],
                     backgroundColor: colores,

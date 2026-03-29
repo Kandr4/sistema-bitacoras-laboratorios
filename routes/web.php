@@ -121,6 +121,13 @@ Route::middleware('auth')->group(function () {
         Route::get('asistencias/{id}/edit', [AsistenciaController::class, 'editAdmin'])->name('asistencias.edit');
         Route::put('asistencias/{id}', [AsistenciaController::class, 'updateAdmin'])->name('asistencias.update');
         Route::put('asistencias/{id}/inactivar', [AsistenciaController::class, 'inactivarAdmin'])->name('asistencias.inactivar');
+
+        // 📊 REPORTES E INTELIGENCIA DE NEGOCIO
+        Route::prefix('reportes')->name('reportes.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\ReporteController::class, 'index'])->name('index');
+            Route::get('/asistencias', [\App\Http\Controllers\ReporteController::class, 'asistencias'])->name('asistencias.index');
+            Route::get('/asistencias/exportar', [\App\Http\Controllers\ReporteController::class, 'exportarAsistencias'])->name('asistencias.exportar');
+        });
     });
 
     // 🧑‍🔧 TECNICO 🔥 (LO QUE NECESITAS)
