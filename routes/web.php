@@ -180,11 +180,8 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/admin', function () {
-    $laboratorios = Laboratorio::all();
-
-    return view('admin.dashboard', compact('laboratorios'));
-})->middleware(['auth', 'role:Admin']);
+Route::get('/admin', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->middleware(['auth', 'role:Admin'])->name('admin.dashboard');
+Route::get('/admin/export/pdf', [\App\Http\Controllers\AdminDashboardController::class, 'exportPdf'])->middleware(['auth', 'role:Admin'])->name('admin.dashboard.pdf');
 
 Route::get('/profesor', function () {
     return view('profesor.dashboard');
