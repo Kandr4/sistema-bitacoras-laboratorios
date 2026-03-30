@@ -144,6 +144,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/solicitudes', [SolicitudSoftwareController::class, 'all'])
             ->name('solicitudes.index');
+        Route::get('/solicitudes/{id}/edit', [SolicitudSoftwareController::class, 'edit'])
+            ->name('solicitudes.edit');
+        Route::put('/solicitudes/{id}', [SolicitudSoftwareController::class, 'update'])
+            ->name('solicitudes.update');
 
         Route::get('/mantenimiento/create', [MantenimientoController::class, 'create'])
         ->name('mantenimiento.create');

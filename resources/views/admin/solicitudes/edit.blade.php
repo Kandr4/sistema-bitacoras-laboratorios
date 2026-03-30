@@ -6,7 +6,13 @@
 
 <div class="p-6">
 
-<form method="POST" action="{{ route('admin.solicitudes.update', $solicitud->idsolSoftware) }}">
+@php
+    $updateRoute = Auth::user()->rol === 'Técnico' 
+        ? route('tecnico.solicitudes.update', $solicitud->idsolSoftware) 
+        : route('admin.solicitudes.update', $solicitud->idsolSoftware);
+@endphp
+
+<form method="POST" action="{{ $updateRoute }}">
 @csrf
 @method('PUT')
 

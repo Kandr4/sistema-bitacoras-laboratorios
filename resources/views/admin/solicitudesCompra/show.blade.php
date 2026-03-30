@@ -21,7 +21,7 @@
                         <span class="px-2 py-1 rounded-full text-xs font-semibold
                         @if($solicitud->estado == 'autorizada') bg-green-100 text-green-800
                         @elseif($solicitud->estado == 'rechazada') bg-red-100 text-red-800
-                        @elseif($solicitud->estado == 'en proceso') bg-yellow-100 text-yellow-800
+                        @elseif($solicitud->estado == 'en_proceso') bg-yellow-100 text-yellow-800
                         @else bg-gray-100 text-gray-800 @endif">
                         {{ ucfirst($solicitud->estado) }}
                         </span>
@@ -43,7 +43,7 @@
                     <select name="estado" required class="border rounded px-3 py-2 w-full focus:ring-1 focus:ring-blue-500">
                         <option value="autorizada" {{ $solicitud->estado == 'autorizada' ? 'selected' : '' }}>Autorizada</option>
                         <option value="rechazada" {{ $solicitud->estado == 'rechazada' ? 'selected' : '' }}>Rechazada</option>
-                        <option value="en proceso" {{ $solicitud->estado == 'en proceso' ? 'selected' : '' }}>En proceso</option>
+                        <option value="en_proceso" {{ $solicitud->estado == 'en_proceso' ? 'selected' : '' }}>En proceso</option>
                     </select>
                 </div>
 

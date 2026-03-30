@@ -128,6 +128,9 @@ class SolicitudSoftwareController extends Controller
             );
         }
 
+        if ($user->rol === 'Técnico') {
+            return redirect('/tecnico/solicitudes')->with('success', 'Solicitud actualizada');
+        }
         return redirect('/admin/solicitudes')->with('success', 'Solicitud actualizada');
     }
     public function destroy($id)

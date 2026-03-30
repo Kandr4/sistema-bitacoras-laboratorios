@@ -91,7 +91,7 @@ class SolicitudController extends Controller
     $solicitud = Solicitud::findOrFail($id);
 
     $request->validate([
-        'estado' => 'required|in:autorizada,rechazada,en proceso',
+        'estado' => 'required|in:autorizada,rechazada,en_proceso',
         'comentario_admin' => 'nullable|string'
     ]);
 

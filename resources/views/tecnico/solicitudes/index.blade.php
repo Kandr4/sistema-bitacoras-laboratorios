@@ -90,7 +90,7 @@
         <div class="flex justify-center gap-2">
 
             <!-- EDITAR -->
-            <a href="{{ route('admin.solicitudes.edit', ['id' => $sol->idsolSoftware]) }}"
+            <a href="{{ route('tecnico.solicitudes.edit', ['id' => $sol->idsolSoftware]) }}"
                 class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition">
                 Editar
             </a>

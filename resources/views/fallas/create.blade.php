@@ -12,7 +12,12 @@
                 Registrar nueva falla
             </h3>
 
-            <form action="{{ route('fallas.store') }}" method="POST" class="space-y-5">
+            @php
+                $storeRoute = Auth::user()->rol === 'Profesor' ? route('profesor.fallas.store') : route('fallas.store');
+                $indexRoute = Auth::user()->rol === 'Profesor' ? route('profesor.fallas.index') : route('fallas.index');
+            @endphp
+
+            <form action="{{ $storeRoute }}" method="POST" class="space-y-5">
                 @csrf
 
                 {{-- Laboratorio --}}
@@ -75,7 +80,7 @@
 
                 {{-- Botones --}}
                 <div class="flex justify-end gap-2 pt-4">
-                    <a href="{{ route('fallas.index') }}"
+                    <a href="{{ $indexRoute }}"
                        class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition">
                         Cancelar
                     </a>

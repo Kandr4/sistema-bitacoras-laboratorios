@@ -13,22 +13,22 @@ class IncidenciaPolicy
     // Ver incidencia
     public function view(User $user, Incidencia $incidencia)
     {
-        if ($user->rol === 'admin') return true;
-        return $user->id === $incidencia->idtecnico;
+        if ($user->rol === 'Admin') return true;
+        return $user->id === $incidencia->user_id;
     }
 
     // Editar incidencia
     public function update(User $user, Incidencia $incidencia)
     {
-        if ($user->rol === 'admin') return true;
-        return $user->id === $incidencia->idtecnico;
+        if ($user->rol === 'Admin') return true;
+        return $user->id === $incidencia->user_id;
     }
 
     // Permitir eliminar
     public function delete(User $user, Incidencia $incidencia)
     {
         // Admin puede eliminar todo
-        if ($user->rol === 'admin') return true;
+        if ($user->rol === 'Admin') return true;
 
         // Técnico solo puede eliminar si es su incidencia **y aún está pendiente**
         return $user->id === $incidencia->user_id && $incidencia->estado === 'pendiente';
