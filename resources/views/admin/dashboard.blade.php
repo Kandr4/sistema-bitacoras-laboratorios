@@ -47,6 +47,16 @@
                     </div>
                 </a>
 
+                {{-- Respaldos (DB) --}}
+                <a href="{{ route('admin.backups.index') }}"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-emerald-600 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-emerald-50 opacity-0 group-hover:opacity-100 transition"></div>
+                    <div class="relative z-10">
+                        <h3 class="text-lg font-bold text-emerald-800">💾 Respaldos</h3>
+                        <p class="text-gray-500 text-sm mt-1">Copias de seguridad y restauración de la BD</p>
+                    </div>
+                </a>
+
                 {{-- Usuarios --}}
                 <a href="{{ route('usuarios.index') }}"
                     class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-l-4 border-blue-500">
